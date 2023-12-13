@@ -1,12 +1,18 @@
 package com.lizana.clienteproducto.model;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PerfilUser {
 
     private String tipoDeDocumento;
     private String numeroDeDocumento;
-    private String tipodeproducto;
-    private String Subclase;
+    private String idDeProducto;
     private Number titular;
     private Number firmante;
 
