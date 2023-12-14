@@ -1,23 +1,22 @@
 package com.lizana.clienteproducto.util;
 
-import com.lizana.clienteproducto.model.externoproduct.StatusResponse;
+import com.lizana.clienteproducto.model.PerfilUser;
+import com.lizana.clienteproducto.model.externosaldo.StatusResponse;
+import com.lizana.clienteproducto.model.externosaldo.SaldoDto;
 import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Single;
-import com.lizana.clienteproducto.model.PerfilUser;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.GET;
-import retrofit2.http.Header;
-import retrofit2.http.Headers;
+import retrofit2.http.*;
 
 
-
-public class ServiceProducto {
+public class ServiceSaldo {
     public interface ProductService {
-        @GET("/product")
+        @POST("/saldo")
         @Headers("Content-Type: application/json")
-        Single<StatusResponse> getProduct(@Header("productId") String productId);
+        Maybe<StatusResponse> postProduct(@Body SaldoDto saldoDto);
+
     }
 
     private static Retrofit getRetrofitInstance() {
@@ -28,11 +27,10 @@ public class ServiceProducto {
                 .build();
     }
 
-    public static Maybe<StatusResponse> serviceProductWc(PerfilUser dto) {
+    public static Maybe<StatusResponse> serviceProductWc(SaldoDto dto) {
         Retrofit retrofit = getRetrofitInstance();
         ProductService productService = retrofit.create(ProductService.class);
 
-        return productService.getProduct(dto.getIdDeProducto())
-                .toMaybe();
+        return productService.postProduct(dto);
     }
 }

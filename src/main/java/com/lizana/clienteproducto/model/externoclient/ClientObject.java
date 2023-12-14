@@ -1,4 +1,4 @@
-package com.lizana.clienteproducto.model.externoClient;
+package com.lizana.clienteproducto.model.externoclient;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package com.lizana.clienteproducto.util;
 
-import com.lizana.clienteproducto.model.externoClient.StatusResponse;
+import com.lizana.clienteproducto.model.externoclient.StatusResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;

@@ -2,11 +2,15 @@ package com.lizana.clienteproducto.service.impl;
 
 import com.lizana.clienteproducto.model.PerfilUser;
 import com.lizana.clienteproducto.model.StatusResponse;
+import com.lizana.clienteproducto.model.externosaldo.SaldoDto;
 import com.lizana.clienteproducto.service.ClienteProductoService;
 import com.lizana.clienteproducto.util.ServiceClient;
 import com.lizana.clienteproducto.util.KafkaRestClientService;
 import com.lizana.clienteproducto.util.ServiceProducto;
+import com.lizana.clienteproducto.util.ServiceSaldo;
+import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Maybe;
+import io.reactivex.rxjava3.disposables.Disposable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -33,10 +37,10 @@ public class ClienteProductoServiceImpl implements ClienteProductoService {
         System.out.println("inicio save:");
 
 
-        Mono<ResponseEntity<com.lizana.clienteproducto.model.externoClient.StatusResponse>> restuestakasfka =
+        Mono<ResponseEntity<com.lizana.clienteproducto.model.externoclient.StatusResponse>> restuestakasfka =
                 kafkaRestClientService.getClient(dto.getTipoDeDocumento(), dto.getNumeroDeDocumento());
         restuestakasfka.subscribe(responseEntity -> {
-            com.lizana.clienteproducto.model.externoClient.StatusResponse statusResponse = responseEntity.getBody();
+            com.lizana.clienteproducto.model.externoclient.StatusResponse statusResponse = responseEntity.getBody();
             System.out.println("Respuesta de Kafka: " + statusResponse);
         }, throwable -> {
             // Manejar errores de manera reactiva
@@ -56,7 +60,9 @@ public class ClienteProductoServiceImpl implements ClienteProductoService {
 
         System.out.println("inicio save:wc ");
 
-        Mono<ResponseEntity<com.lizana.clienteproducto.model.externoClient.StatusResponse>> responseClient = ServiceClient.serviceClientWc(dto);
+        Mono<ResponseEntity<com.lizana.clienteproducto.model.externoclient.StatusResponse>> responseClient = ServiceClient.serviceClientWc(dto);
+
+        @NonNull Maybe<ResponseEntity<com.lizana.clienteproducto.model.externoclient.StatusResponse>> convertidoMaybe = Maybe.fromPublisher(responseClient);
         responseClient.doOnSuccess(statusResponse -> {
             System.out.println(statusResponse.getBody().getCode());
             System.out.println(statusResponse.getBody().getDescription());
@@ -73,9 +79,7 @@ public class ClienteProductoServiceImpl implements ClienteProductoService {
                 .subscribe();
 
 
-
-
-        Maybe<com.lizana.clienteproducto.model.externoProduct.StatusResponse> responseProduct = ServiceProducto.serviceProductWc(dto);
+        Maybe<com.lizana.clienteproducto.model.externoproduct.StatusResponse> responseProduct = ServiceProducto.serviceProductWc(dto);
         responseProduct
                 .doOnSuccess(statusResponse -> {
                     System.out.println(statusResponse.getCode());
@@ -88,15 +92,43 @@ public class ClienteProductoServiceImpl implements ClienteProductoService {
                 })
                 .doOnComplete(() -> {
                     // Acciones cuando la secuencia se completa
-                    System.out.println("La secuencia se ha completado.");
+                    System.out.println("La secuencia se ha completado1.");
                 })
                 .subscribe();
 
 
+        @NonNull Maybe<StatusResponse> adsa = Maybe.zip(convertidoMaybe, responseProduct,
+                        (valueCliente, valueProducto) -> metodoGrabar(valueCliente, valueProducto, dto))
+                .flatMap(result -> result);
+        return adsa;
+    }
+
+    private Maybe<StatusResponse> metodoGrabar(ResponseEntity<com
+            .lizana.clienteproducto.model.externoclient.StatusResponse> valueCliente, com.lizana.clienteproducto.model
+            .externoproduct.StatusResponse valueProduct,PerfilUser dto) {
+
+
+        SaldoDto saldoDto = new SaldoDto();
+        saldoDto.setProducto(valueProduct.getDetail().getIdDeProducto());
+        saldoDto.setCliente(valueCliente.getBody().getDetail().getId());
+        saldoDto.setFirmante(dto.getFirmante());
+        saldoDto.setTitular(dto.getTitular());
+        saldoDto.setSaldo(0);
+
+        Maybe<com.lizana.clienteproducto.model.externosaldo.StatusResponse> responseSaldo = ServiceSaldo.serviceProductWc(saldoDto);
 
 
 
-        StatusResponse statusResponse = new StatusResponse();
-        return Maybe.just(statusResponse);
+        return responseSaldo
+                .map(statusResponse -> {
+                    System.out.println(statusResponse.getCode());
+                    System.out.println(statusResponse.getDescription());
+                    System.out.println(statusResponse.getDetail().toString());
+                    StatusResponse s = new StatusResponse();
+                    s.setCode(statusResponse.getCode());
+                    s.setDescription(statusResponse.getDescription());
+                    s.setDetail(statusResponse.getDetail());
+                    return s;
+                });
     }
 }

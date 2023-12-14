@@ -12,7 +12,7 @@ public class ServiceClient {
 
 
 
-    public static Mono<ResponseEntity<com.lizana.clienteproducto.model.externoClient.StatusResponse>> serviceClientWc(PerfilUser dto){
+    public static Mono<ResponseEntity<com.lizana.clienteproducto.model.externoclient.StatusResponse>> serviceClientWc(PerfilUser dto){
 
         String url = "http://localhost:8080/client";
         WebClient.Builder builder = WebClient.builder();
@@ -26,7 +26,7 @@ public class ServiceClient {
                 .uri(url)
                 .headers(httpHeaders -> httpHeaders.addAll(headers))
                 .retrieve()
-                .toEntity(com.lizana.clienteproducto.model.externoClient.StatusResponse.class)
+                .toEntity(com.lizana.clienteproducto.model.externoclient.StatusResponse.class)
                 .onErrorResume(throwable -> {
                     // Manejar errores reactivamente
                     System.err.println("Error al realizar la solicitud HTTP: " + throwable.getMessage());
