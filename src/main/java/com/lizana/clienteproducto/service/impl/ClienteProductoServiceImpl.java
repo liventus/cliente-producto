@@ -109,7 +109,7 @@ public class ClienteProductoServiceImpl implements ClienteProductoService {
 
 
         SaldoDto saldoDto = new SaldoDto();
-        saldoDto.setProducto(valueProduct.getDetail().getIdDeProducto());
+        saldoDto.setProducto(valueProduct.getDetail().getId());
         saldoDto.setCliente(valueCliente.getBody().getDetail().getId());
         saldoDto.setFirmante(dto.getFirmante());
         saldoDto.setTitular(dto.getTitular());
