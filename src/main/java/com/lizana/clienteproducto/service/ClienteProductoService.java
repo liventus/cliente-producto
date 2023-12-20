@@ -6,7 +6,7 @@ import io.reactivex.rxjava3.core.Maybe;
 
 public interface ClienteProductoService {
 
-    Maybe<StatusResponse> saveProduct(PerfilUser ProductObject);
+
 
     Maybe<StatusResponse> saveProductwc(PerfilUser ProductObject);
 

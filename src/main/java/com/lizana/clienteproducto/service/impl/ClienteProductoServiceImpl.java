@@ -5,12 +5,11 @@ import com.lizana.clienteproducto.model.StatusResponse;
 import com.lizana.clienteproducto.model.externosaldo.SaldoDto;
 import com.lizana.clienteproducto.service.ClienteProductoService;
 import com.lizana.clienteproducto.util.ServiceClient;
-import com.lizana.clienteproducto.util.KafkaRestClientService;
 import com.lizana.clienteproducto.util.ServiceProducto;
 import com.lizana.clienteproducto.util.ServiceSaldo;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Maybe;
-import io.reactivex.rxjava3.disposables.Disposable;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -25,35 +24,11 @@ public class ClienteProductoServiceImpl implements ClienteProductoService {
 
 
 
-    @Autowired
-    KafkaRestClientService kafkaRestClientService;
-
-
-
-
-    @Override
-    public  Maybe<StatusResponse> saveProduct(PerfilUser dto) {
-
-        System.out.println("inicio save:");
-
-
-        Mono<ResponseEntity<com.lizana.clienteproducto.model.externoclient.StatusResponse>> restuestakasfka =
-                kafkaRestClientService.getClient(dto.getTipoDeDocumento(), dto.getNumeroDeDocumento());
-        restuestakasfka.subscribe(responseEntity -> {
-            com.lizana.clienteproducto.model.externoclient.StatusResponse statusResponse = responseEntity.getBody();
-            System.out.println("Respuesta de Kafka: " + statusResponse);
-        }, throwable -> {
-            // Manejar errores de manera reactiva
-            System.err.println("Error al obtener la respuesta de Kafka: " + throwable.getMessage());
-        });
 
 
 
 
 
-        StatusResponse statusResponse = new StatusResponse();
-        return Maybe.just(statusResponse);
-    }
 
     @Override
     public Maybe<StatusResponse> saveProductwc(PerfilUser dto) {
