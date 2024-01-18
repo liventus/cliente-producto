@@ -45,19 +45,6 @@
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 			<version>4.0.3</version>
 		</dependency>
-		<!--epara que sea api rectivo-->
-		<dependency>
-			<groupId>io.reactivex.rxjava3</groupId>
-			<artifactId>rxjava</artifactId>
-			<version>3.0.13</version>
-		</dependency>
-
-		<!-- Retrofit -->
-		<dependency>
-			<groupId>com.squareup.retrofit2</groupId>
-			<artifactId>retrofit</artifactId>
-			<version>2.9.0</version>
-		</dependency>
 
 		<!-- Conversor Gson para Retrofit -->
 		<dependency>
@@ -68,11 +55,7 @@
 		<!-- https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit-adapters -->
 		<!-- Adaptador de Retrofit para RxJava 3 -->
 		<!-- https://mvnrepository.com/artifact/com.github.akarnokd/rxjava3-retrofit-adapter -->
-		<dependency>
-			<groupId>com.github.akarnokd</groupId>
-			<artifactId>rxjava3-retrofit-adapter</artifactId>
-			<version>3.0.0</version>
-		</dependency>
+
 
 
 
